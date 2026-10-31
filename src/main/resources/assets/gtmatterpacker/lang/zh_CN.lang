@@ -1,0 +1,12 @@
+item.gtmatterpacker.manipulator.name=打包物质操纵者 III
+gtmatterpacker.help=对空中右键打开圆环，在“选择模式”中选择“打包储存”。
+gtmatterpacker.loaded=已携带包裹：
+gtmatterpacker.mode=打包储存
+gtmatterpacker.mark_source=标记打包区域
+gtmatterpacker.mark_target=标记部署位置
+gtmatterpacker.pack=执行打包
+gtmatterpacker.deploy=执行部署
+gtmatterpacker.records=包裹管理
+gtmatterpacker.status=查看记录
+gtmatterpacker.recover=找回最近包裹
+gtmatterpacker.clear=清除已部署编号

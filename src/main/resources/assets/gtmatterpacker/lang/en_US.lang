@@ -1,0 +1,12 @@
+item.gtmatterpacker.manipulator.name=Packed Matter Manipulator MK-III
+gtmatterpacker.help=Right-click the air, then select Packing in the mode ring.
+gtmatterpacker.loaded=Carrying package:
+gtmatterpacker.mode=Packing
+gtmatterpacker.mark_source=Mark pack region
+gtmatterpacker.mark_target=Mark deployment
+gtmatterpacker.pack=Pack region
+gtmatterpacker.deploy=Deploy package
+gtmatterpacker.records=Packages
+gtmatterpacker.status=Show records
+gtmatterpacker.recover=Recover latest package
+gtmatterpacker.clear=Clear deployed reference
