@@ -1,6 +1,7 @@
 package dev.gtmatterpacker;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -9,6 +10,7 @@ import net.minecraft.util.ChatComponentText;
 
 import com.recursive_pineapple.matter_manipulator.common.items.manipulator.ItemMatterManipulator;
 import com.recursive_pineapple.matter_manipulator.common.items.manipulator.Location;
+import com.recursive_pineapple.matter_manipulator.common.items.manipulator.MMConfig;
 import com.recursive_pineapple.matter_manipulator.common.items.manipulator.MMState;
 import com.recursive_pineapple.matter_manipulator.common.items.manipulator.MMState.PendingAction;
 import com.recursive_pineapple.matter_manipulator.common.items.manipulator.MMState.PlaceMode;
@@ -48,6 +50,8 @@ final class PackerControl {
                 case COPYING:
                 case EXCHANGING:
                 case CABLES:
+                    if (loaded(stack))
+                        stash(PackageStore.forWorld(player.worldObj), player.getUniqueID(), tag, state.config);
                     tag.setBoolean("PackingMode", false);
                     state.config.placeMode = PlaceMode.valueOf(action.name());
                     state.config.action = null;
@@ -86,6 +90,7 @@ final class PackerControl {
                     PackageStore.forWorld(player.worldObj)
                         .require(tag.getString("MatterPackage"), player.getUniqueID(), "CONSUMED");
                     tag.removeTag("MatterPackage");
+                    tag.removeTag("PackageName");
                     break;
                 case RECOVER:
                     if (loaded(stack)) throw new IOException("This tool already carries a package / 已携带包裹");
@@ -95,6 +100,7 @@ final class PackerControl {
                     NBTTagCompound record = PackageStore.forWorld(player.worldObj)
                         .require(id, player.getUniqueID(), "PACKED");
                     tag.setString("MatterPackage", id);
+                    tag.setString("PackageName", PackageStore.displayName(id, record));
                     summary(stack, record);
                     state.config.coordC = null;
                     state.config.action = null;
@@ -110,6 +116,22 @@ final class PackerControl {
             player.inventory.markDirty();
             player.inventoryContainer.detectAndSendChanges();
         }
+    }
+
+    static void stash(PackageStore store, UUID owner, NBTTagCompound tag, MMConfig config) throws IOException {
+        String id = tag.getString("MatterPackage");
+        if (id.isEmpty()) throw new IOException("No selected package / 没有选中的包裹");
+        store.require(id, owner, "PACKED");
+        tag.removeTag("MatterPackage");
+        tag.removeTag("PackageName");
+        tag.removeTag("PackageSizeX");
+        tag.removeTag("PackageSizeY");
+        tag.removeTag("PackageSizeZ");
+        // Pack and deployment previews share these coordinates with the original modes.
+        config.coordA = null;
+        config.coordB = null;
+        config.coordC = null;
+        config.action = null;
     }
 
     private static void requireMode(ItemStack stack) throws IOException {

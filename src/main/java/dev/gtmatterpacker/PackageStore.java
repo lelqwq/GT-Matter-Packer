@@ -42,6 +42,7 @@ final class PackageStore {
         data.setInteger("Version", 1);
         data.setString("Owner", owner.toString());
         data.setString("State", "PACKING");
+        data.setString("Name", "Structure " + id.substring(0, 8));
         write(id, data);
         return id;
     }
@@ -84,6 +85,54 @@ final class PackageStore {
                 ids.add(id + " " + data.getString("State"));
         }
         return ids;
+    }
+
+    static String displayName(String id, NBTTagCompound data) {
+        String name = data.getString("Name");
+        return name.isEmpty() ? "Structure " + id.substring(0, 8) : name;
+    }
+
+    void rename(String id, UUID owner, String name) throws IOException {
+        name = name.trim();
+        if (name.isEmpty() || name.length() > 64) throw new IOException("Name must be 1-64 characters / 名称须为1至64个字符");
+        for (int i = 0; i < name.length(); i++)
+            if (Character.isISOControl(name.charAt(i)) || name.charAt(i) == '\u00a7')
+                throw new IOException("Invalid name / 名称包含无效字符");
+        NBTTagCompound data = require(id, owner, "PACKED");
+        data.setString("Name", name);
+        write(id, data);
+    }
+
+    List<PackageInfo> records(UUID owner) throws IOException {
+        List<PackageInfo> records = new ArrayList<>();
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".nbt"));
+        if (files == null) return records;
+        for (File file : files) {
+            String id = file.getName()
+                .substring(
+                    0,
+                    file.getName()
+                        .length() - 4);
+            NBTTagCompound data = read(id);
+            if (owner.toString()
+                .equals(data.getString("Owner")) && !"CONSUMED".equals(data.getString("State")))
+                records.add(new PackageInfo(id, displayName(id, data), data.getString("State")));
+        }
+        records.sort(
+            java.util.Comparator.comparing((PackageInfo entry) -> entry.name)
+                .thenComparing(entry -> entry.id));
+        return records;
+    }
+
+    static final class PackageInfo {
+
+        final String id, name, state;
+
+        PackageInfo(String id, String name, String state) {
+            this.id = id;
+            this.name = name;
+            this.state = state;
+        }
     }
 
     private Path path(String id) throws IOException {

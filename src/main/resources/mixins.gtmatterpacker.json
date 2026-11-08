@@ -5,5 +5,5 @@
   "refmap": "mixins.gtmatterpacker.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
-  "mixins": ["ManipulatorStateMixin"]
+  "mixins": []
 }

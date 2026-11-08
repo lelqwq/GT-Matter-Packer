@@ -5,15 +5,12 @@ import java.io.IOException;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 
-import gregtech.common.blocks.BlockFrameBox;
-
 final class BlockData {
 
     private BlockData() {}
 
     static boolean requiresTileData(Block block, int meta) {
-        // Bare GT frames deliberately return null from their tile factory; covers add an optional tile.
-        return block.hasTileEntity(meta) && !(block instanceof BlockFrameBox);
+        return block.hasTileEntity(meta);
     }
 
     static int readMetadata(NBTTagCompound data) throws IOException {

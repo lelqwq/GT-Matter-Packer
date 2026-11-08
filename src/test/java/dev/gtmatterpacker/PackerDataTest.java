@@ -13,6 +13,7 @@ public class PackerDataTest {
         NBTTagCompound original = new NBTTagCompound();
         original.setBoolean("PackingMode", true);
         original.setString("MatterPackage", "persistent-reference");
+        original.setString("PackageName", "采矿场");
         original.setInteger("PackageSizeX", 16);
         original.setInteger("PackageSizeY", 12);
         original.setInteger("PackageSizeZ", 8);
@@ -22,6 +23,7 @@ public class PackerDataTest {
         PackerData.preserve(original, updated);
         assertTrue(updated.getBoolean("PackingMode"));
         assertEquals("persistent-reference", updated.getString("MatterPackage"));
+        assertEquals("采矿场", updated.getString("PackageName"));
         assertEquals(16, updated.getInteger("PackageSizeX"));
         assertEquals(12, updated.getInteger("PackageSizeY"));
         assertEquals(8, updated.getInteger("PackageSizeZ"));

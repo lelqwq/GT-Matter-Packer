@@ -2,6 +2,7 @@ package dev.gtmatterpacker;
 
 import java.util.function.Consumer;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
@@ -19,6 +20,15 @@ final class PackerMenu {
             .getHeldItem();
         for (Widget widget : window.getChildren()) if (widget instanceof RadialMenu) {
             configure((RadialMenu) widget, PackerControl.active(held), PackerControl.loaded(held), action -> {
+                if (action == PackerAction.LIBRARY) {
+                    int slot = context.getPlayer().inventory.currentItem;
+                    context.getPlayer()
+                        .closeScreen();
+                    Minecraft.getMinecraft()
+                        .displayGuiScreen(new GuiPackageLibrary(slot));
+                    LibraryNetwork.send(0, slot, 0, "", "");
+                    return;
+                }
                 PackerNetwork.send(action, context.getPlayer().inventory.currentItem);
                 context.getPlayer()
                     .closeScreen();
@@ -59,6 +69,7 @@ final class PackerMenu {
                     loaded ? "gtmatterpacker.clear" : "gtmatterpacker.recover",
                     loaded ? PackerAction.CLEAR : PackerAction.RECOVER,
                     send));
+            radial.options.add(option("gtmatterpacker.library", PackerAction.LIBRARY, send));
         };
         menu.options.add(recovery);
     }

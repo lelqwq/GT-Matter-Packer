@@ -83,4 +83,14 @@ public class PackerMenuTest {
         click(menu, 1);
         assertEquals(PackerAction.CLEAR, sent.get(2));
     }
+
+    @Test
+    public void packageManagementOffersTheNamedLibrary() {
+        RadialMenu menu = base();
+        List<PackerAction> sent = new ArrayList<>();
+        PackerMenu.configure(menu, true, true, sent::add);
+        click(menu, 3);
+        click(menu, 2);
+        assertEquals(PackerAction.LIBRARY, sent.get(0));
+    }
 }

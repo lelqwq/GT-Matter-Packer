@@ -32,10 +32,12 @@ public final class ItemPackedManipulator extends ItemMatterManipulator {
         lines.add(StatCollector.translateToLocal("gtmatterpacker.help"));
         if (stack.hasTagCompound() && stack.getTagCompound()
             .hasKey("MatterPackage")) {
+            String name = stack.getTagCompound()
+                .getString("PackageName");
             lines.add(
                 StatCollector.translateToLocal("gtmatterpacker.loaded") + " "
-                    + stack.getTagCompound()
-                        .getString("MatterPackage"));
+                    + (name.isEmpty() ? stack.getTagCompound()
+                        .getString("MatterPackage") : name));
         }
     }
 

@@ -28,9 +28,9 @@ public class BlockDataTest {
     }
 
     @Test
-    public void realGTFrameAdvertisesATileButItsFactoryReturnsNull() throws Exception {
+    public void bareGTFrameDoesNotRequireATile() throws Exception {
         BlockFrameBox frame = bareFrame();
-        assertTrue(frame.hasTileEntity(316));
+        assertFalse(frame.hasTileEntity(316));
         assertNull(frame.createNewTileEntity(null, 316));
         assertFalse(BlockData.requiresTileData(frame, 316));
         PackingService.Entry entry = new PackingService.Entry();
@@ -61,12 +61,21 @@ public class BlockDataTest {
         tile.func_145976_a("optional frame data retained");
         PackingService.Entry entry = new PackingService.Entry();
         entry.block = bareFrame();
-        entry.meta = 316;
+        entry.meta = 316 | BlockFrameBox.MTE_BIT;
         entry.tile = new NBTTagCompound();
         tile.writeToNBT(entry.tile);
         NBTTagCompound original = (NBTTagCompound) entry.tile.copy();
         entry.validate(null);
         assertEquals(original, entry.tile);
+    }
+
+    @Test(expected = IOException.class)
+    public void coveredFrameMissingItsTileIsRejected() throws Exception {
+        PackingService.Entry entry = new PackingService.Entry();
+        entry.block = bareFrame();
+        entry.meta = 316 | BlockFrameBox.MTE_BIT;
+        assertTrue(BlockData.requiresTileData(entry.block, entry.meta));
+        entry.validate(null);
     }
 
     @Test

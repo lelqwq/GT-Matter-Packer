@@ -1,14 +1,20 @@
 package dev.gtmatterpacker;
 
+import java.util.Arrays;
+
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
 
 import com.recursive_pineapple.matter_manipulator.common.items.MMItemList;
 
-public final class UpgradeRecipe implements IRecipe {
+public final class UpgradeRecipe extends ShapelessRecipes {
+
+    public UpgradeRecipe() {
+        super(new ItemStack(GTMatterPacker.ITEM), Arrays.asList(MMItemList.MK0.get(), new ItemStack(Items.ender_eye)));
+    }
 
     @Override
     public boolean matches(InventoryCrafting inv, World world) {
@@ -21,7 +27,7 @@ public final class UpgradeRecipe implements IRecipe {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack s = inv.getStackInSlot(i);
             if (s == null) continue;
-            if (s.getItem() == MMItemList.MK3.get()
+            if (s.getItem() == MMItemList.MK0.get()
                 .getItem() && source == null) source = s;
             else if (s.getItem() == Items.ender_eye && !eye) eye = true;
             else return null;

@@ -82,6 +82,7 @@ final class TileLifecycle {
             throw new IOException("Unknown GT machine");
         NBTTagCompound again = new NBTTagCompound();
         restored.writeToNBT(again);
+        QuantumNodeData.recoverDeferredProxy(restored, data, again);
         TileData.checkRoundTrip(data, again, gt, restored instanceof AEBaseTile || restored instanceof TileMultipart);
     }
 
@@ -114,7 +115,6 @@ final class TileLifecycle {
                 ((MTEPipeLaser) gt.getMetaTileEntity()).updateNeighboringNetworks();
             if (gt.getMetaTileEntity() instanceof MTEPipeData)
                 ((MTEPipeData) gt.getMetaTileEntity()).updateNeighboringNetworks();
-            gt.issueClientUpdate();
             gt.issueTileUpdate();
             gt.issueTextureUpdate();
         }

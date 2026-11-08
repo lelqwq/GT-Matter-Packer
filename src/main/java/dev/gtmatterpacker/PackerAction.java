@@ -12,5 +12,6 @@ enum PackerAction {
     EXECUTE,
     RECOVER,
     CLEAR,
-    STATUS
+    STATUS,
+    LIBRARY
 }

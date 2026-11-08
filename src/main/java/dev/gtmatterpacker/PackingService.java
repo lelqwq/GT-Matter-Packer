@@ -27,6 +27,7 @@ import com.recursive_pineapple.matter_manipulator.mixin.BlockCaptureDrops;
 
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
+import gregtech.api.metatileentity.implementations.MTEHatchMaintenance;
 
 final class PackingService {
 
@@ -52,14 +53,25 @@ final class PackingService {
                 throw new IOException("Unbreakable block: " + px + "," + py + "," + pz);
             TileEntity tile = world.getTileEntity(px, py, pz);
             TileLifecycle.checkAccess(tile, player);
-            if (tile instanceof IGregTechTileEntity && ((IGregTechTileEntity) tile).isActive())
-                throw new IOException("Stop the machines before packing / 请先停止机器");
+            // Maintenance hatches use the active flag for their own maintenance state, not processing.
+            if (tile instanceof IGregTechTileEntity && ((IGregTechTileEntity) tile).isActive()
+                && !(((IGregTechTileEntity) tile).getMetaTileEntity() instanceof MTEHatchMaintenance))
+                throw new IOException(
+                    "Stop active machine / 请先停止活动机器: " + px
+                        + ","
+                        + py
+                        + ","
+                        + pz
+                        + " ("
+                        + Block.blockRegistry.getNameForObject(block)
+                        + ")");
             if (tile instanceof BaseMetaTileEntity && !((BaseMetaTileEntity) tile).playerOwnsThis(player, false))
                 throw new IOException("Machine belongs to another player");
             if (MinecraftForge.EVENT_BUS
                 .post(new BlockEvent.BreakEvent(px, py, pz, world, block, world.getBlockMetadata(px, py, pz), player)))
                 throw new IOException("Protected block / 区域受到保护");
             Entry entry = Entry.capture(world, px, py, pz);
+            QuantumNodeData.checkAnchor(entry.tile, bounds, world.provider.dimensionId);
             entry.x = x;
             entry.y = y;
             entry.z = z;
@@ -102,6 +114,8 @@ final class PackingService {
         String id = store.create(data, player.getUniqueID());
         ItemMatterManipulator.getOrCreateNbtData(stack)
             .setString("MatterPackage", id);
+        ItemMatterManipulator.getOrCreateNbtData(stack)
+            .setString("PackageName", PackageStore.displayName(id, data));
         boolean previousRestoring = world.restoringBlockSnapshots;
         world.restoringBlockSnapshots = true;
         BlockCaptureDrops.captureDrops(world);
@@ -200,6 +214,8 @@ final class PackingService {
             store.transition(id, data, "DEPLOYING", "CONSUMED");
             stack.getTagCompound()
                 .removeTag("MatterPackage");
+            stack.getTagCompound()
+                .removeTag("PackageName");
         } catch (Exception failure) {
             try {
                 clearRegion(world, entries, ox, oy, oz);

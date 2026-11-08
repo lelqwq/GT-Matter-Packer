@@ -53,6 +53,11 @@ final class TileData {
         copy.removeTag("x");
         copy.removeTag("y");
         copy.removeTag("z");
+        if (QuantumNodeData.ID.equals(copy.getString("id"))) {
+            // Online state is recomputed after the node rejoins its network.
+            copy.removeTag("linked");
+            if (copy.hasKey("partContainer", 10)) stripNetworkNodes(copy.getCompoundTag("partContainer"));
+        }
         if (ae) stripNetworkNodes(copy);
         return copy;
     }
