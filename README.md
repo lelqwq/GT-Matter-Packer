@@ -61,7 +61,7 @@
 
 ## 构建与验证
 
-Windows：`gradlew.bat build`。使用 GTNH Gradle，Forge 1.7.10，依赖锁定到本次实例版本。构建及单元测试结果见 VALIDATION.md。游戏内验收步骤见 TESTING.md。
+Windows：`gradlew.bat build`。使用 GTNH Gradle，Forge 1.7.10，依赖锁定到本次实例版本。
 
 Matter Manipulator 0.1.75 的 `setState` 原地更新状态字段并保留其他 NBT，因此本版本不再启用旧的状态保存 Mixin。圆环扩展使用原菜单公开的选项列表，没有替换原 Mod 文件。
 
