@@ -19,6 +19,25 @@ final class TileData {
         return copy;
     }
 
+    static void normalizeWirelessCover(NBTTagCompound source, NBTTagCompound restored, int side) {
+        NBTTagList before = source.getTagList("gt.covers", 10);
+        NBTTagList after = restored.getTagList("gt.covers", 10);
+        if (before.tagCount() != after.tagCount()) return;
+        for (int i = 0; i < before.tagCount(); i++) {
+            NBTTagCompound oldCover = before.getCompoundTagAt(i);
+            NBTTagCompound newCover = after.getCompoundTagAt(i);
+            if (oldCover.getByte("s") != side || newCover.getByte("s") != side
+                || oldCover.getInteger("id") != newCover.getInteger("id")
+                || !oldCover.hasKey("d", 10)
+                || !newCover.hasKey("d", 10)) continue;
+            NBTTagCompound oldData = oldCover.getCompoundTag("d");
+            NBTTagCompound newData = newCover.getCompoundTag("d");
+            // GT-SWN 2.1.19 defaults missing allowInput to true and writes it back.
+            if (!oldData.hasKey("allowInput") && newData.hasKey("allowInput", 1) && newData.getByte("allowInput") == 1)
+                oldData.setBoolean("allowInput", true);
+        }
+    }
+
     static void checkRoundTrip(NBTTagCompound source, NBTTagCompound restored, boolean gt, boolean ae)
         throws IOException {
         if (!source.getString("id")

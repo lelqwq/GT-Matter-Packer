@@ -72,6 +72,42 @@ public class TileDataTest {
     }
 
     @Test
+    public void legacyWirelessCoverAcceptsOnlyTheAddedDefaultInputFlag() throws Exception {
+        NBTTagCompound original = machine();
+        NBTTagCompound cover = new NBTTagCompound();
+        cover.setInteger("id", 11076);
+        cover.setByte("s", (byte) 0);
+        NBTTagCompound coverData = new NBTTagCompound();
+        coverData.setLong("storedEU", 3204485120L);
+        coverData.setInteger("voltage", 2097152);
+        cover.setTag("d", coverData);
+        NBTTagList covers = new NBTTagList();
+        covers.appendTag(cover);
+        original.setTag("gt.covers", covers);
+        NBTTagCompound restored = (NBTTagCompound) original.copy();
+        NBTTagCompound restoredData = restored.getTagList("gt.covers", 10)
+            .getCompoundTagAt(0)
+            .getCompoundTag("d");
+        restoredData.setBoolean("allowInput", true);
+        NBTTagCompound comparison = (NBTTagCompound) original.copy();
+        TileData.normalizeWirelessCover(comparison, restored, 0);
+        TileData.checkRoundTrip(comparison, restored, true, false);
+        assertFalse(coverData.hasKey("allowInput"));
+
+        restoredData.setLong("storedEU", 0);
+        try {
+            TileData.checkRoundTrip(comparison, restored, true, false);
+            fail("Lost cover energy accepted");
+        } catch (IOException expected) {}
+        restoredData.setLong("storedEU", 3204485120L);
+        restoredData.setBoolean("allowInput", false);
+        try {
+            TileData.checkRoundTrip(comparison, restored, true, false);
+            fail("Changed cover input setting accepted");
+        } catch (IOException expected) {}
+    }
+
+    @Test
     public void multipartMissingOnePartIsRejected() throws Exception {
         NBTTagCompound source = new NBTTagCompound();
         source.setString("id", "savedMultipart");

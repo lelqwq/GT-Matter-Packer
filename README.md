@@ -1,12 +1,12 @@
 # GT Matter Packer
 
-面向 GTNH 2.9.0 的独立附属 Mod，版本 **1.1.0 alpha**。编译依赖 Matter Manipulator **0.1.75-GTNH**、GT5-Unofficial **5.09.54.265**、Forge Multipart **1.7.18** 和 CodeChickenCore **1.4.22**。本版本尚未通过 2.9.0 游戏内验收，请仅在完整存档副本上测试。
+面向 GTNH 2.9.0 的独立附属 Mod，版本 **1.1.1**。编译依赖 Matter Manipulator **0.1.75-GTNH**、GT5-Unofficial **5.09.54.265**、Forge Multipart **1.7.18** 和 CodeChickenCore **1.4.22**。
 
 新物品直接继承原版 MK-III，沿用其充电、升级、菜单、选区、建造、复制、移动和外观。新增打包／部署操作保存真实机器数据，并消耗该份数据部署一次。
 
 ## 使用
 
-1. 将 `build/libs/gtmatterpacker-1.1.0.jar` 放入**测试实例**的 mods。升级时移除旧版 GT Matter Packer jar，仅保留一个版本。多人游戏需要服务器与客户端都安装；保留原物质操纵者 Mod。
+1. 将 `build/libs/gtmatterpacker-1.1.1.jar` 放入**测试实例**的 mods。升级时移除旧版 GT Matter Packer jar，仅保留一个版本。多人游戏需要服务器与客户端都安装；保留原物质操纵者 Mod。
 2. 用原型物质操纵者 + 末影之眼无序合成打包物质操纵者 III。该合成保留原工具 NBT，包括电量、设置和升级。
 3. 手持新物品，对空中右键打开原圆环，进入“选择模式 → 打包储存”。原来的五种模式仍然在同一个模式圆环中。
 4. 再打开圆环，选择“标记打包区域”，依次右键确认区域两角。停止机器后，从圆环选择“执行打包”，或按原习惯对空中按住 Shift＋右键约半秒。成功后原区域被取走。

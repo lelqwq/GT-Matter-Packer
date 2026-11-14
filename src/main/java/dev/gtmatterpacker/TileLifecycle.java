@@ -83,7 +83,19 @@ final class TileLifecycle {
         NBTTagCompound again = new NBTTagCompound();
         restored.writeToNBT(again);
         QuantumNodeData.recoverDeferredProxy(restored, data, again);
-        TileData.checkRoundTrip(data, again, gt, restored instanceof AEBaseTile || restored instanceof TileMultipart);
+        NBTTagCompound comparison = (NBTTagCompound) data.copy();
+        if (restored instanceof CoverableTileEntity) {
+            CoverableTileEntity coverable = (CoverableTileEntity) restored;
+            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+                if (coverable.getCoverAtSide(side)
+                    .getClass()
+                    .getName()
+                    .equals("com.miaokatze.gtswn.common.covers.GTswn_Cover_EnergyWireless"))
+                    TileData.normalizeWirelessCover(comparison, again, side.ordinal());
+            }
+        }
+        TileData
+            .checkRoundTrip(comparison, again, gt, restored instanceof AEBaseTile || restored instanceof TileMultipart);
     }
 
     static void detach(World world, int x, int y, int z) {
